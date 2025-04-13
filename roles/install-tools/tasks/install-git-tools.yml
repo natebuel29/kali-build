@@ -1,0 +1,83 @@
+---
+- name: "Install Git repos"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+  loop:
+     - {repo: "https://github.com/dirkjanm/krbrelayx", dest: "/opt/krbrelayx"}
+     - {repo: "https://github.com/jtesta/ssh-audit", dest: "/opt/ssh-audit"}
+     - {repo: "https://github.com/ShutdownRepo/pywhisker", dest: "/opt/pywhisker"}
+     - {repo: "https://github.com/Flangvik/SharpCollection", dest: "/opt/SharpCollection"}
+     - {repo: "https://github.com/danielmiessler/SecLists", dest: "/opt/SecLists"}
+     - {repo: "https://github.com/fortra/impacket", dest: "/opt/impacket"}
+     - {repo: "https://github.com/ParrotSec/mimikatz", dest: "/opt/mimikatz"}
+     - {repo: "https://github.com/Kevin-Robertson/Inveigh", dest: "/opt/Inveigh"}
+     - {repo: "https://github.com/int0x33/nc.exe/", dest: "/opt/nc.exe"}
+     - {repo: "https://github.com/PowerShellMafia/PowerSploit", dest: "/opt/PowerSploit"}
+  become: true
+  become_method: sudo
+
+
+- name: "create temporary build dir"
+  ansible.builtin.tempfile:
+    state: directory
+  register: build_dir
+
+- name: "Copy Python scrip to download github releases"
+  copy:
+    src: "files/githubdownload.py"
+    dest: "{{ build_dir.path }}/githubdownload.py"
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  become_method: sudo
+
+
+- name: "Downloading github releases"
+  shell: "{{ build_dir.path }}/githubdownload.py {{ item.repo }} {{ item.regex }} {{ item.location }} {% if item.filename is defined %}{{ item.filename }}{% endif %}"
+  loop:
+   # - { repo: "obsidianmd/obsidian-releases",  regex: ".deb", location: "/tmp/obsidian" }
+    - { repo: "jpillora/chisel",  regex: "_linux_amd64.gz", location: "/opt/chisel" }
+    - { repo: "jpillora/chisel",  regex: "_windows_amd64.gz", location: "/opt/chisel" }
+    - { repo: "carlospolop/PEASS-ng",  regex: "linpeas.sh", location: "/opt/peas" }
+    - { repo: "carlospolop/PEASS-ng",  regex: "winPEASx64.exe", location: "/opt/peas" }
+    - { repo: "WithSecureLabs/chainsaw",  regex: "chainsaw_all_", location: "/opt/" }
+    - { repo: "BloodHoundAD/BloodHound", regex: "BloodHound-linux-x64.zip", location: "/opt/" }
+    - { repo: "AlessandroZ/LaZagne", regex: ".exe", location: "/opt/"}
+    - { repo: "DominicBreuker/pspy", regex: "pspy64", location: "/opt/"}
+  async: 45
+  poll: 0
+  become: true
+  become_method: sudo
+
+
+# - name: "Check DEB file of Obsidian"
+#   find:
+#     paths: "/tmp/obsidian"
+#     file_type: file
+#   register: found_files
+
+# - name: "Display found files"
+#   apt:
+#     deb: "{{ item.path }}"
+#     state: present
+#   when: "'deb' in item.path"
+#   loop: "{{ found_files.files }}"
+#   become: True
+#   become_method: sudo 
+
+# - name: Remove Obsidian Binary directory
+#   ansible.builtin.file:
+#     path: "/tmp/obsidian"
+#     state: absent
+#   when: "'deb' in item.path"
+#   loop: "{{ found_files.files }}"
+#   become: True
+#   become_method: sudo 
+
+- name: Remove temporary build directory
+  ansible.builtin.file:
+    path: "{{ build_dir.path }}"
+    state: absent
+  when: build_dir.path is defined
