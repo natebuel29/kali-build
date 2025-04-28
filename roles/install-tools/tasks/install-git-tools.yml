@@ -53,29 +53,29 @@
   become_method: sudo
 
 
-# - name: "Check DEB file of Obsidian"
-#   find:
-#     paths: "/tmp/obsidian"
-#     file_type: file
-#   register: found_files
+- name: "Check DEB file of Obsidian"
+  find:
+    paths: "/tmp/obsidian"
+    file_type: file
+  register: found_files
 
-# - name: "Display found files"
-#   apt:
-#     deb: "{{ item.path }}"
-#     state: present
-#   when: "'deb' in item.path"
-#   loop: "{{ found_files.files }}"
-#   become: True
-#   become_method: sudo 
+- name: "Display found files"
+  apt:
+    deb: "{{ item.path }}"
+    state: present
+  when: "'deb' in item.path"
+  loop: "{{ found_files.files }}"
+  become: True
+  become_method: sudo 
 
-# - name: Remove Obsidian Binary directory
-#   ansible.builtin.file:
-#     path: "/tmp/obsidian"
-#     state: absent
-#   when: "'deb' in item.path"
-#   loop: "{{ found_files.files }}"
-#   become: True
-#   become_method: sudo 
+- name: Remove Obsidian Binary directory
+  ansible.builtin.file:
+    path: "/tmp/obsidian"
+    state: absent
+  when: "'deb' in item.path"
+  loop: "{{ found_files.files }}"
+  become: True
+  become_method: sudo 
 
 - name: Remove temporary build directory
   ansible.builtin.file:

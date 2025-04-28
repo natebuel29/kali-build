@@ -10,7 +10,6 @@
     url: https://sh.rustup.rs
     dest: /tmp/sh.rustup.rs
     mode: "0755"
-    when: cargo_check is failed
 
 - name: run Rust install script
   shell: /tmp/sh.rustup.rs -y
