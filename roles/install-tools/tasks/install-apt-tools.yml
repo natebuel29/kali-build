@@ -1,0 +1,38 @@
+---
+# tasks file for install-tools
+- name: Update apt repo
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+  become_method: sudo
+
+- name: Upgrade packages
+  apt:
+    upgrade: yes
+  become: true
+  become_method: sudo
+
+- name: Remove netexec
+  apt:
+    name: "netexec"
+    state: absent
+
+- name: Install list of packages
+  apt:
+    pkg:
+      - vim
+      - ntpdate
+      - golang
+      - flameshot
+      - jq
+      - pipx
+      - exiftool
+      - curl
+      - ca-certificates
+      - auditd
+      - autorecon
+      - neo4j
+    state: latest
+  become: true
+  become_method: sudo

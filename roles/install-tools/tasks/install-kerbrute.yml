@@ -1,0 +1,19 @@
+---
+- name: check if kerbrute exists
+  stat:
+    path: /usr/local/bin/kerbrute
+  register: kerbrute_path
+
+- name: install kerbrute
+  shell: go install github.com/ropnop/kerbrute@latest
+
+- name: copy kerbrute to bin 
+  copy:
+    src: "/home/{{ansible_env.USER}}/go/bin/kerbrute"
+    dest: "/usr/local/bin/kerbrute"
+    owner: "{{ansible_env.USER}}"
+    group: "{{ansible_env.USER}}"
+    mode: "0750"
+  become: true
+  become_method: sudo
+  when: not kerbrute_path.stat.exists

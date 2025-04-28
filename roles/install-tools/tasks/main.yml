@@ -1,0 +1,6 @@
+---
+- include_tasks: install-rust.yml
+- include_tasks: install-apt-tools.yml
+- include_tasks: install-git-tools.yml
+- include_tasks: install-pipx-tools.yml
+- include_tasks: install-kerbrute.yml
