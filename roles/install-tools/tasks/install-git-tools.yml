@@ -14,6 +14,7 @@
      - {repo: "https://github.com/Kevin-Robertson/Inveigh", dest: "/opt/Inveigh"}
      - {repo: "https://github.com/int0x33/nc.exe/", dest: "/opt/nc.exe"}
      - {repo: "https://github.com/PowerShellMafia/PowerSploit", dest: "/opt/PowerSploit"}
+     - {repo: "https://github.com/arthaud/git-dumper", dest: "/opt/git-dumper"}
   become: true
   become_method: sudo
 
